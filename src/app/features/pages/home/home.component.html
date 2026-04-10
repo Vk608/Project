@@ -1,0 +1,93 @@
+<div class="home-container">
+  <div class="home-content">
+    <div class="welcome-section">
+      <h2>Welcome to PubMed Validation</h2>
+      <p class="description">
+        Start a new validation job to validate PubMed records against the Agent API. 
+        The process will run in the background, and you can track progress in real-time.
+      </p>
+    </div>
+
+    <app-error-banner [errorMessage]="error" (closed)="onErrorClosed()"></app-error-banner>
+
+    <div class="validation-panel">
+      <h3>Start Validation Job</h3>
+
+      <div class="job-control">
+        <button 
+          class="btn btn-primary btn-large"
+          (click)="startValidation()"
+          [disabled]="isStarting || isPolling"
+        >
+          <span *ngIf="!isStarting">▶ Start Validation</span>
+          <span *ngIf="isStarting">Starting...</span>
+        </button>
+
+        <button 
+          *ngIf="isPolling"
+          class="btn btn-secondary"
+          (click)="stopPolling()"
+        >
+          ⏹ Stop Polling
+        </button>
+      </div>
+
+      <div *ngIf="currentJob" class="job-status">
+        <div class="status-header">
+          <h4>Current Job Status</h4>
+          <span 
+            class="status-badge"
+            [style.backgroundColor]="getJobStatusColor()"
+          >
+            {{ currentJob.statusDisplay }}
+          </span>
+        </div>
+
+        <div class="status-details">
+          <p><strong>Job ID:</strong> <code>{{ currentJob.jobId }}</code></p>
+          <p><strong>Created:</strong> {{ currentJob.createdAt | date:'short' }}</p>
+          
+          <div *ngIf="currentJob.startedAt" class="status-info">
+            <p><strong>Started:</strong> {{ currentJob.startedAt | date:'short' }}</p>
+          </div>
+
+          <div *ngIf="currentJob.durationSeconds" class="status-info">
+            <p><strong>Duration:</strong> {{ currentJob.durationSeconds | number:'1.1-1' }}s</p>
+          </div>
+        </div>
+
+        <div class="progress-section">
+          <p>
+            <strong>Progress:</strong> {{ currentJob.successfulRecords }} / {{ currentJob.totalRecords }}
+            ({{ getProgressPercentage() | number:'1.0-0' }}%)
+          </p>
+          <div class="progress-bar">
+            <div 
+              class="progress-fill"
+              [style.width.%]="getProgressPercentage()"
+            ></div>
+          </div>
+        </div>
+
+        <div *ngIf="currentJob.failedRecords > 0" class="error-stats">
+          <p>
+            <strong>Failed:</strong> 
+            <span class="failed-count">{{ currentJob.failedRecords }}</span>
+          </p>
+        </div>
+
+        <div *ngIf="currentJob.errorMessage" class="error-message">
+          <p><strong>Error:</strong> {{ currentJob.errorMessage }}</p>
+        </div>
+
+        <div *ngIf="currentJob.status === 'Completed'" class="success-message">
+          <p>✓ Validation completed successfully! Go to <strong>Results</strong> to view validated records.</p>
+        </div>
+      </div>
+
+      <div *ngIf="!currentJob" class="no-job">
+        <p>No active validation job. Click "Start Validation" to begin.</p>
+      </div>
+    </div>
+  </div>
+</div>
