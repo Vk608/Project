@@ -1,0 +1,37 @@
+{
+  "agentApi": {
+    "url": "http://localhost:5001",
+    "userId": "demo-user",
+    "apiKey": "demo-key-12345",
+    "timeoutSeconds": 45
+  },
+  "dataProcessing": {
+    "fileHandling": {
+      "inputFilePath": "sample.xlsx",
+      "outputFilePath": "output.xlsx",
+      "inputSheetName": "Data"
+    },
+    "inputSchema": {
+      "requiredColumns": [
+        "PMID",
+        "Title",
+        "Abstract",
+        "MeSHTerms",
+        "Chemicals",
+        "Authors",
+        "JournalName",
+        "ISSN",
+        "PublicationYear",
+        "Language",
+        "Country"
+      ]
+    },
+    "classification": {
+      "confidenceThreshold_Exact": 0.65,
+      "confidenceThreshold_Minor": 0.45,
+      "confidenceThreshold_Major": 0.25,
+      "maxChunksForMajor": 3
+    }
+  }
+}
+

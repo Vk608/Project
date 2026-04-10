@@ -1,0 +1,42 @@
+[
+  {
+    "InputPMID": "54",
+    "MatchedPMID": "1042",
+    "ConfidenceScore": 0.9232374,
+    "Match_Extent": "MAJOR_DISCREPANCY",
+    "Discrepancies_Logical": "None. The scientific content is identical between the input record and the retrieved PubMed article. The title, journal, publication year, authors, MeSH terms, chemicals, language, and country all match exactly [1]. The study examines correlations between physical, pharmacological, and clinical properties of acidic anti-inflammatory agents, and this research question and scope remain unchanged.",
+    "Discrepancies_Metadata": "The input record lists PMID as 54, while the correct PubMed identifier for this article is PMID 1042 [1]. All other metadata fields (title, journal name, publication year, author list, MeSH terms, chemicals, language, and country) are identical between the input and the retrieved PubMed record. This represents a pure identifier mismatch without any accompanying changes to bibliographic or scientific content.\n\n---",
+    "Summary": "This case is classified as **MAJOR_DISCREPANCY** because the PubMed identifier differs between the input (54) and the correct record (1042), despite perfect alignment of all other metadata and scientific content [1]. According to the classification criteria, when the PMID differs even though semantic similarity is high, the result must be categorized as MAJOR_DISCREPANCY rather than EXACT_MATCH or MINOR_CHANGE. The discrepancy is purely administrative\u2014an incorrect identifier was assigned to an otherwise accurately described article.\n\n---",
+    "OriginalTitle": "Acidic antiinflammatory agents--correlations of some physical, pharmacological and clinical data."
+  },
+  {
+    "InputPMID": "1095",
+    "MatchedPMID": "1095",
+    "ConfidenceScore": 0.93425816,
+    "Match_Extent": "EXACT_MATCH",
+    "Discrepancies_Logical": "None\n\nDiscrepancies_Metadata:\nNone\n\nSummary:\nThe input record matches the retrieved PubMed article with PMID 1095 exactly across all bibliographic and semantic dimensions. The title, journal name (Biochimica et biophysica acta), publication year (1975), author (M H Meisler), MeSH terms, chemicals, language (eng), and country (Netherlands) are identical. The scientific meaning and scope of the study\u2014investigating the inhibition of human liver beta-galactosidases and beta-glucosidase by n-bromoacetyl-beta-D-galactosylamine\u2014are fully consistent. No discrepancies in content or metadata exist, warranting classification as EXACT_MATCH. [1]\n\nReferences:\n[1] pm_id_1095-1",
+    "Discrepancies_Metadata": "None\n\nSummary:\nThe input record matches the retrieved PubMed article with PMID 1095 exactly across all bibliographic and semantic dimensions. The title, journal name (Biochimica et biophysica acta), publication year (1975), author (M H Meisler), MeSH terms, chemicals, language (eng), and country (Netherlands) are identical. The scientific meaning and scope of the study\u2014investigating the inhibition of human liver beta-galactosidases and beta-glucosidase by n-bromoacetyl-beta-D-galactosylamine\u2014are fully consistent. No discrepancies in content or metadata exist, warranting classification as EXACT_MATCH. [1]\n\nReferences:\n[1] pm_id_1095-1",
+    "Summary": "PMID: 1095\nConfidence Score: 1.0\nMatch_Extent: EXACT_MATCH\n\nDiscrepancies_Logical:\nNone\n\nDiscrepancies_Metadata:\nNone\n\nSummary:\nThe input record matches the retrieved PubMed article with PMID 1095 exactly across all bibliographic and semantic dimensions. The title, journal name (Biochimica et biophysica acta), publication year (1975), author (M H Meisler), MeSH terms, chemicals, language (eng), and country (Netherlands) are identical. The scientific meaning and scope of the study\u2014investigating the inhibition of human liver beta-galactosidases and beta-glucosidase by n-bromoacetyl-beta-D-galactosylamine\u2014are fully consistent. No discrepancies in content or metadata exist, warranting classification as EXACT_MATCH. [1]\n\nReferences:\n[1] pm_id_1095-1",
+    "OriginalTitle": "Inhibition of human liver beta-galactosidases and beta-glucosidase by n-bromoacetyl-beta-D-galactosylamine."
+  },
+  {
+    "InputPMID": "1101",
+    "MatchedPMID": "1101",
+    "ConfidenceScore": 0.92976063,
+    "Match_Extent": "EXACT_MATCH",
+    "Discrepancies_Logical": "None\n\n---",
+    "Discrepancies_Metadata": "None\n\n---",
+    "Summary": "The input record corresponds precisely to PubMed article PMID 1101. All bibliographic metadata align exactly: the title \u0022[Letter: Change in trypsin sensitivity during structural rearrangements in biological membranes]\u0022 matches verbatim, the journal \u0022Biofizika\u0022 (ISSN: 0006-3029) is correct, the author list (R D Adzerikho, S L Aksentsev, I M Okun\u0027, S V Konev) is identical, and all MeSH terms (Animals, Cattle, Cell Membrane, Deoxycholic Acid, Erythrocytes, Hot Temperature, Hydrogen-Ion Concentration, In Vitro Techniques, Radiation Effects, Trypsin, Ultraviolet Rays) and chemicals (Deoxycholic Acid, Trypsin) match exactly [1]. The language (Russian) and country (Russia/Federation) are consistent with the source record [1]. No abstract is provided in either the input or the retrieved source, which is typical for letter-type publications. There are no logical or metadata discrepancies; this is a complete and exact match.\n\n---",
+    "OriginalTitle": "[Letter: Change in trypsin sensitivity during structural rearrangements in biological membranes]."
+  },
+  {
+    "InputPMID": "113",
+    "MatchedPMID": "113",
+    "ConfidenceScore": 0.94383836,
+    "Match_Extent": "EXACT_MATCH",
+    "Discrepancies_Logical": "None",
+    "Discrepancies_Metadata": "None",
+    "Summary": "The input record matches PubMed article PMID 113 with complete bibliographic and semantic alignment. All metadata fields\u2014title, journal name, publication year, authors, MeSH terms, chemicals, language, and country\u2014are identical between the input and the retrieved PubMed record. No scientific or factual discrepancies exist, and the scientific meaning of the record is preserved without alteration. This constitutes an exact match with no deviations in content or metadata.",
+    "OriginalTitle": "Proceedings: The effects of glucagon on the hepatic arterial vasculature of the dog: an inhibition of the effects of vasoconstrictor agents."
+  }
+]
