@@ -3,22 +3,23 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { RecordService } from '../../core/services/record.service';
-import { ValidationService } from '../../core/services/validation.service';
-import { ValidatedRecord, MatchExtent, MATCH_TYPE_CONFIG } from '../../shared/models/validated-record';
-import { ValidationJobComponent } from '../validation/validation-job.component';
-import { ErrorBannerComponent } from '../../shared/components/error-banner.component';
-import { LoaderComponent } from '../../shared/components/loader/loader.component';
-import { ButtonComponent } from '../../shared/components/button/button.component';
+import { RecordService } from '../../../core/services/record.service';
+import { ValidationService } from '../../../core/services/validation.service';
+import { ValidatedRecord, MatchExtent, MATCH_TYPE_CONFIG } from '../../../shared/models/validated-record';
+import { ErrorBannerComponent } from '../../../shared/components/error-banner.component';
+import { LoaderComponent } from '../../../shared/components/loader/loader.component';
+import { CardComponent } from '../../../shared/components/card/card.component';
+import { ButtonComponent } from '../../../shared/components/button/button.component';
+import { ToastService } from '../../../shared/components/toast/toast.service';
 
 @Component({
-  selector: 'app-records-list',
+  selector: 'app-results',
   standalone: true,
-  imports: [CommonModule, FormsModule, ValidationJobComponent, ErrorBannerComponent, LoaderComponent, ButtonComponent],
-  templateUrl: './records-list.component.html',
-  styleUrls: ['./records-list.component.scss']
+  imports: [CommonModule, FormsModule, ErrorBannerComponent, LoaderComponent, CardComponent, ButtonComponent],
+  templateUrl: './results.component.html',
+  styleUrls: ['./results.component.scss']
 })
-export class RecordsListComponent implements OnInit, OnDestroy {
+export class ResultsComponent implements OnInit, OnDestroy {
   records: ValidatedRecord[] = [];
   isLoading: boolean = false;
   error: string | null = null;
@@ -51,15 +52,25 @@ export class RecordsListComponent implements OnInit, OnDestroy {
 
   constructor(
     private recordService: RecordService,
-    private validationService: ValidationService
+    private validationService: ValidationService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
     this.loadRecords();
 
     this.recordService.filteredRecords$.pipe(takeUntil(this.destroy$)).subscribe(records => {
+      console.log(`[DEBUG - ResultsComponent] Received new dataset from RecordService. Total records: ${records ? records.length : 0}`);
       this.records = records;
+      
+      if (records && records.length > 0) {
+        console.log(`[DEBUG - ResultsComponent] Ready to render data. Sample record:`, records[0]);
+      } else {
+        console.warn(`[DEBUG - ResultsComponent] Data array is empty. The empty state ("No validated records found") will be displayed.`);
+      }
+      
       this.currentPage = 1; // Reset to first page on filter change
+      console.log(`[DEBUG - ResultsComponent] Setting current page to 1. Expected paginated items: ${Math.min(this.pageSize, records.length)}`);
     });
 
     this.recordService.isLoading$.pipe(takeUntil(this.destroy$)).subscribe(isLoading => {
@@ -75,6 +86,7 @@ export class RecordsListComponent implements OnInit, OnDestroy {
       if (job && job.status === 'Completed') {
         setTimeout(() => {
           this.recordService.refreshRecords();
+          this.toastService.show('Results refreshed from latest validation.', 'success');
         }, 1000);
       }
     });
@@ -144,12 +156,6 @@ export class RecordsListComponent implements OnInit, OnDestroy {
       cssClass: 'match-none',
       icon: 'help'
     };
-  }
-
-  getConfidenceClass(score: number): string {
-    if (score >= 0.8) return 'confidence-high';
-    if (score >= 0.6) return 'confidence-medium';
-    return 'confidence-low';
   }
 
   getSortIndicator(column: string): string {

@@ -3,21 +3,22 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ValidationService } from '../../core/services/validation.service';
-import { RecordService } from '../../core/services/record.service';
-import { BatchJob, JobStatus } from '../../shared/models/batch-job';
-import { ErrorBannerComponent } from '../../shared/components/error-banner.component';
-import { ButtonComponent } from '../../shared/components/button/button.component';
-import { ToastService } from '../../shared/components/toast/toast.service';
+import { ValidationService } from '../../../core/services/validation.service';
+import { BatchJob, JobStatus } from '../../../shared/models/batch-job';
+import { ErrorBannerComponent } from '../../../shared/components/error-banner.component';
+import { LoaderComponent } from '../../../shared/components/loader/loader.component';
+import { CardComponent } from '../../../shared/components/card/card.component';
+import { ButtonComponent } from '../../../shared/components/button/button.component';
+import { ToastService } from '../../../shared/components/toast/toast.service';
 
 @Component({
-  selector: 'app-validation-job',
+  selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, ErrorBannerComponent, ButtonComponent],
-  templateUrl: './validation-job.component.html',
-  styleUrls: ['./validation-job.component.scss']
+  imports: [CommonModule, FormsModule, ErrorBannerComponent, LoaderComponent, CardComponent, ButtonComponent],
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.scss']
 })
-export class ValidationJobComponent implements OnInit, OnDestroy {
+export class HomeComponent implements OnInit, OnDestroy {
   currentJob: BatchJob | null = null;
   isPolling: boolean = false;
   isStarting: boolean = false;
@@ -27,12 +28,17 @@ export class ValidationJobComponent implements OnInit, OnDestroy {
 
   constructor(
     private validationService: ValidationService,
-    private recordService: RecordService,
     private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
     this.validationService.currentJob$.pipe(takeUntil(this.destroy$)).subscribe(job => {
+      if (job && job.status === 'Completed' && this.currentJob?.status !== 'Completed') {
+        this.toastService.show('Validation completed successfully!', 'success');
+      }
+      if (job && job.status === 'Failed' && this.currentJob?.status !== 'Failed') {
+        this.toastService.show('Validation job failed. Check error details.', 'error');
+      }
       this.currentJob = job;
     });
 

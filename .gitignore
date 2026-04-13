@@ -1,0 +1,111 @@
+# Backend (.NET) specific files
+## Build results
+bin/
+obj/
+dist/
+
+## Visual Studio cache/options
+.vs/
+.vscode/
+*.VC.db
+*.VC.VC.opendb
+*.user
+*.userosscache
+*.sln.docstates
+*.sln.tmproj
+
+## Rider cache/options
+.idea/
+*.sln.iml
+.DS_Store
+
+## NuGet
+*.nupkg
+*.snupkg
+.nuget/
+
+## Local user overrides
+appsettings.local.json
+appsettings.Development.json
+
+## Compiled files
+*.dll
+*.exe
+*.pdb
+
+---
+
+# Frontend (Angular) specific files
+## Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+## Angular build
+dist/
+.angular/
+*.js.map
+*.js.bak
+
+## Environment files
+.env
+.env.local
+.env.*.local
+
+## IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+## OS specific
+.DS_Store
+Thumbs.db
+.directory
+
+## Testing & coverage
+coverage/
+*.lcov
+
+## Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+---
+
+# General/Both projects
+## System files
+.DS_Store
+Thumbs.db
+*.tmp
+*.temp
+
+## IDE files
+*.swp
+*.swo
+*~
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+## Build tools
+.gradle/
+build/
+
+## OS-specific
+*.exe
+*.o
+*.so
+*.a
+*.dylib
+
+## Secrets and credentials
+.env
+.env.local
+secrets.json
+secrets.*.json

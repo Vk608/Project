@@ -67,6 +67,17 @@ namespace FABBatchValidator
                 builder.Services.AddEndpointsApiExplorer();
                 builder.Services.AddSwaggerGen();
 
+                // Add CORS policy
+                builder.Services.AddCors(options =>
+                {
+                    options.AddPolicy("AllowLocalhost4200", policy =>
+                    {
+                        policy.WithOrigins("http://localhost:4200")
+                              .AllowAnyMethod()
+                              .AllowAnyHeader();
+                    });
+                });
+
                 Console.WriteLine("[Main] All services registered.\n");
 
                 // Build the app
@@ -79,7 +90,11 @@ namespace FABBatchValidator
                     app.UseSwaggerUI();
                 }
 
-                app.UseHttpsRedirection();
+                // Enable CORS (must be before UseHttpsRedirection and MapControllers)
+                app.UseCors("AllowLocalhost4200");
+
+               
+
                 app.UseAuthorization();
                 app.MapControllers();
 

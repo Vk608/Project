@@ -1,25 +1,32 @@
-<div class="records-container">
+<div class="records-layout">
   <div class="sidebar">
     <app-validation-job></app-validation-job>
   </div>
 
   <div class="main-content">
-    <div class="header">
+    <div class="page-header">
       <h1>PubMed Validation Dashboard</h1>
-      <button class="btn btn-refresh" (click)="loadRecords()" [disabled]="isLoading">
-        {{ isLoading ? '⟳ Loading...' : '↻ Refresh' }}
-      </button>
+      <app-button
+        variant="primary"
+        [loading]="isLoading"
+        (clicked)="loadRecords()"
+      >
+        Refresh
+      </app-button>
     </div>
 
     <app-error-banner [errorMessage]="error" (closed)="onErrorClosed()"></app-error-banner>
 
-    <div class="filters-panel">
-      <h3>Filters & Search</h3>
+    <!-- Filters -->
+    <div class="card mb-lg">
+      <div class="card-header">
+        <h3 class="card-title">Filters</h3>
+      </div>
 
-      <div class="filter-group">
-        <label>Search (PMID / Title)</label>
-        <input 
-          type="text" 
+      <div class="form-group">
+        <label class="form-label">Search (PMID / Title)</label>
+        <input
+          type="text"
           placeholder="Search by PMID or title..."
           [(ngModel)]="searchTerm"
           (keyup.enter)="onSearch()"
@@ -28,64 +35,58 @@
       </div>
 
       <div class="filter-row">
-        <div class="filter-group">
-          <label>Match Type</label>
-          <select 
+        <div class="form-group">
+          <label class="form-label">Match Type</label>
+          <select
             [(ngModel)]="filterMatchExtent"
             (change)="onFilterChange()"
             class="select-field"
           >
-            <option [value]="null">All Types</option>
-            <option *ngFor="let type of matchTypeOptions" [value]="type">
+            <option [ngValue]="null">All Types</option>
+            <option *ngFor="let type of matchTypeOptions" [ngValue]="type">
               {{ matchTypeConfig[type].label }}
             </option>
           </select>
         </div>
 
-        <div class="filter-group">
-          <label>Confidence Score Range</label>
+        <div class="form-group">
+          <label class="form-label">Confidence Score Range</label>
           <div class="range-input">
-            <input 
-              type="range" 
-              min="0" 
-              max="1" 
-              step="0.1"
+            <input
+              type="range"
+              min="0" max="1" step="0.1"
               [(ngModel)]="filterConfidenceMin"
               (change)="onFilterChange()"
-              class="range-slider"
             />
             <span class="range-value">{{ filterConfidenceMin | number:'1.1-1' }}</span>
-            to
-            <input 
-              type="range" 
-              min="0" 
-              max="1" 
-              step="0.1"
+            <span class="text-muted">to</span>
+            <input
+              type="range"
+              min="0" max="1" step="0.1"
               [(ngModel)]="filterConfidenceMax"
               (change)="onFilterChange()"
-              class="range-slider"
             />
             <span class="range-value">{{ filterConfidenceMax | number:'1.1-1' }}</span>
           </div>
         </div>
       </div>
 
-      <button class="btn btn-clear" (click)="clearFilters()">Clear Filters</button>
+      <app-button variant="secondary" (clicked)="clearFilters()">Clear Filters</app-button>
     </div>
 
-    <div *ngIf="isLoading" class="loading-state">
-      <div class="spinner"></div>
-      <p>Loading records...</p>
-    </div>
+    <!-- Loading -->
+    <app-loader *ngIf="isLoading" message="Loading records..."></app-loader>
 
+    <!-- Empty -->
     <div *ngIf="!isLoading && records.length === 0" class="empty-state">
       <p>No validated records found. Start a validation job to see results.</p>
     </div>
 
-    <div *ngIf="!isLoading && records.length > 0" class="results-section">
+    <!-- Results Table -->
+    <div *ngIf="!isLoading && records.length > 0" class="results-section card">
       <div class="results-info">
         <p>
-          Showing {{ (currentPage - 1) * pageSize + 1 }} - {{ getEndIndex() }} 
+          Showing {{ (currentPage - 1) * pageSize + 1 }}–{{ getEndIndex() }}
           of {{ records.length }} records
         </p>
       </div>
@@ -112,38 +113,31 @@
           </thead>
           <tbody>
             <tr *ngFor="let record of paginatedRecords" class="record-row">
-              <td class="pmid">{{ record.inputPMID }}</td>
-              <td class="pmid">
-                <span *ngIf="record.inputPMID !== record.matchedPMID" class="mismatch-badge">
-                  ⚠️
-                </span>
+              <td class="font-mono">{{ record.inputPMID }}</td>
+              <td class="font-mono">
+                <span *ngIf="record.inputPMID !== record.matchedPMID" class="text-warning font-bold" title="PMID mismatch">!</span>
                 {{ record.matchedPMID }}
               </td>
-              <td class="confidence">
+              <td class="confidence-cell">
                 <div class="confidence-bar">
-                  <div 
+                  <div
                     class="confidence-fill"
                     [ngClass]="getConfidenceClass(record.confidenceScore)"
                     [style.width.%]="record.confidenceScore * 100"
                   ></div>
                 </div>
-                <span class="confidence-value">{{ record.confidenceScore | number:'1.2-2' }}</span>
+                <span class="font-bold" style="font-size: var(--font-sm);">{{ record.confidenceScore | number:'1.2-2' }}</span>
               </td>
-              <td class="match-type">
-                <span 
-                  class="match-badge"
-                  [ngStyle]="getMatchBadgeStyles(record.match_Extent)"
-                >
+              <td>
+                <span class="match-badge" [ngClass]="getMatchTypeInfo(record.match_Extent).cssClass">
                   {{ getMatchTypeInfo(record.match_Extent).label }}
                 </span>
               </td>
-              <td class="title" [title]="record.originalTitle">
+              <td class="title-cell" [title]="record.originalTitle">
                 {{ record.originalTitle }}
               </td>
-              <td class="details-btn">
-                <button class="btn btn-small" (click)="toggleDetails(record.inputPMID)">
-                  View
-                </button>
+              <td>
+                <button class="btn btn-secondary btn-sm" (click)="toggleDetails(record.inputPMID)">Details</button>
               </td>
             </tr>
           </tbody>
@@ -151,84 +145,72 @@
       </div>
 
       <div class="pagination">
-        <button 
-          class="btn btn-small"
+        <button
+          class="btn btn-secondary btn-sm"
           (click)="goToPage(currentPage - 1)"
           [disabled]="currentPage === 1"
-        >
-          ← Prev
-        </button>
-        
-        <span class="page-info">
-          Page {{ currentPage }} of {{ totalPages }}
-        </span>
-        
-        <button 
-          class="btn btn-small"
+        >Prev</button>
+        <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
+        <button
+          class="btn btn-secondary btn-sm"
           (click)="goToPage(currentPage + 1)"
           [disabled]="currentPage === totalPages"
-        >
-          Next →
-        </button>
+        >Next</button>
       </div>
 
       <!-- Details Expansion -->
-      <div 
+      <div
         *ngFor="let record of paginatedRecords"
         [ngIf]="expandedRecords[record.inputPMID]"
         class="record-details"
       >
         <div class="details-content">
-          <button 
-            class="details-close"
-            (click)="toggleDetails(record.inputPMID)"
-          >
-            ✕
-          </button>
-
+          <button class="details-close" (click)="toggleDetails(record.inputPMID)">×</button>
           <h4>Record Details</h4>
 
-          <div class="detail-section">
-            <h5>PMID Information</h5>
-            <p><strong>Input PMID:</strong> {{ record.inputPMID }}</p>
-            <p><strong>Matched PMID:</strong> {{ record.matchedPMID }}</p>
-            <p *ngIf="record.inputPMID !== record.matchedPMID" class="warning">
-              ⚠️ PMID mismatch detected
-            </p>
-          </div>
-
-          <div class="detail-section">
-            <h5>Confidence & Match</h5>
-            <p><strong>Confidence Score:</strong> {{ record.confidenceScore | number:'1.2-2' }}</p>
-            <p>
-              <strong>Match Extent:</strong> 
-              <span 
-                class="match-badge"
-                [ngStyle]="getMatchBadgeStyles(record.match_Extent)"
-              >
+          <div class="detail-grid">
+            <div class="detail-field">
+              <span class="detail-label">Input PMID</span>
+              <span class="font-mono">{{ record.inputPMID }}</span>
+            </div>
+            <div class="detail-field">
+              <span class="detail-label">Matched PMID</span>
+              <span class="font-mono">{{ record.matchedPMID }}</span>
+            </div>
+            <div class="detail-field">
+              <span class="detail-label">Confidence</span>
+              <span class="font-bold">{{ record.confidenceScore | number:'1.2-2' }}</span>
+            </div>
+            <div class="detail-field">
+              <span class="detail-label">Match Extent</span>
+              <span class="match-badge" [ngClass]="getMatchTypeInfo(record.match_Extent).cssClass">
                 {{ getMatchTypeInfo(record.match_Extent).label }}
               </span>
-            </p>
+            </div>
           </div>
 
-          <div class="detail-section">
-            <h5>Title</h5>
+          <div *ngIf="record.inputPMID !== record.matchedPMID" class="alert alert-warning mt-sm">
+            <p>PMID mismatch detected between input and matched records.</p>
+          </div>
+
+          <div class="detail-section" *ngIf="record.originalTitle">
+            <span class="detail-label">Title</span>
             <p>{{ record.originalTitle }}</p>
           </div>
 
           <div *ngIf="record.discrepancies_Logical && record.discrepancies_Logical !== 'None'" class="detail-section">
-            <h5>Logical Discrepancies</h5>
-            <p class="discrepancies">{{ record.discrepancies_Logical }}</p>
+            <span class="detail-label">Logical Discrepancies</span>
+            <p class="detail-block">{{ record.discrepancies_Logical }}</p>
           </div>
 
           <div *ngIf="record.discrepancies_Metadata && record.discrepancies_Metadata !== 'None'" class="detail-section">
-            <h5>Metadata Discrepancies</h5>
-            <p class="discrepancies">{{ record.discrepancies_Metadata }}</p>
+            <span class="detail-label">Metadata Discrepancies</span>
+            <p class="detail-block">{{ record.discrepancies_Metadata }}</p>
           </div>
 
           <div class="detail-section">
-            <h5>Summary</h5>
-            <p class="summary">{{ record.summary }}</p>
+            <span class="detail-label">Summary</span>
+            <p class="detail-block">{{ record.summary }}</p>
           </div>
         </div>
       </div>

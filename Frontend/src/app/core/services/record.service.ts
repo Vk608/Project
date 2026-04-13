@@ -31,10 +31,20 @@ export class RecordService {
   getRecords(): Observable<ValidatedRecord[]> {
     this.isLoadingSubject.next(true);
     this.errorSubject.next(null);
+    
+    console.log('[DEBUG - RecordService] Fetching records from backend API: GET /records');
 
     return this.apiService.get<ValidatedRecord[]>('/records').pipe(
       tap({
         next: (records) => {
+          console.log(`[DEBUG - RecordService] Successfully received ${records ? records.length : 0} records from backend.`);
+          
+          if (!records || records.length === 0) {
+            console.warn('[DEBUG - RecordService] The backend returned an empty array or null. This means the JSON file is likely empty or no validation job has produced results yet.');
+          } else {
+            console.log('[DEBUG - RecordService] Sample of first record received:', records[0]);
+          }
+
           // Convert match_Extent string to enum if needed
           const processedRecords = records.map(record => ({
             ...record,
@@ -44,9 +54,11 @@ export class RecordService {
           this.recordsSubject.next(processedRecords);
           this.filteredRecordsSubject.next(processedRecords);
           this.isLoadingSubject.next(false);
+          
+          console.log(`[DEBUG - RecordService] Data processing complete. Emitted ${processedRecords.length} records to subscribers.`);
         },
         error: (err) => {
-          console.error('Error loading records:', err);
+          console.error('[DEBUG - RecordService] Error occurred while loading records:', err);
           this.errorSubject.next(err.message || 'Failed to load records');
           this.isLoadingSubject.next(false);
         }

@@ -1,0 +1,37 @@
+<nav class="navbar">
+  <div class="navbar-container">
+    <div class="navbar-brand">
+      <h1>{{ applicationTitle }}</h1>
+    </div>
+    
+    <ul class="nav-links">
+      <li>
+        <a 
+          routerLink="/home" 
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          Home
+        </a>
+      </li>
+      <li>
+        <a 
+          routerLink="/results" 
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          Results
+        </a>
+      </li>
+      <li>
+        <a 
+          routerLink="/history" 
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          History
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>

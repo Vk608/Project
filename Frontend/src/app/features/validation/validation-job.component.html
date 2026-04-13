@@ -1,77 +1,70 @@
-<div class="validation-panel">
-  <h3>Validation Job Management</h3>
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">Validation Job</h3>
+  </div>
 
   <app-error-banner [errorMessage]="error" (closed)="onErrorClosed()"></app-error-banner>
 
   <div class="job-control">
-    <button 
-      class="btn btn-primary"
-      (click)="startValidation()"
+    <app-button
+      variant="primary"
+      [loading]="isStarting"
       [disabled]="isStarting || isPolling"
+      (clicked)="startValidation()"
     >
-      <span *ngIf="!isStarting">▶ Start Validation</span>
-      <span *ngIf="isStarting">Starting...</span>
-    </button>
+      {{ isStarting ? 'Starting...' : 'Start Validation' }}
+    </app-button>
 
-    <button 
+    <app-button
       *ngIf="isPolling"
-      class="btn btn-secondary"
-      (click)="stopPolling()"
+      variant="danger"
+      (clicked)="stopPolling()"
     >
-      ⏹ Stop Polling
-    </button>
+      Stop Polling
+    </app-button>
   </div>
 
-  <div *ngIf="currentJob" class="job-status">
-    <div class="status-header">
+  <div *ngIf="currentJob" class="job-status-panel">
+    <div class="status-header-row">
       <h4>Current Job</h4>
-      <span 
-        class="status-badge"
-        [style.backgroundColor]="getJobStatusColor()"
-      >
+      <span class="status-badge" [ngClass]="getStatusBadgeClass()">
         {{ currentJob.statusDisplay }}
       </span>
     </div>
 
     <div class="status-details">
-      <p><strong>Job ID:</strong> <code>{{ currentJob.jobId }}</code></p>
-      <p><strong>Created:</strong> {{ currentJob.createdAt | date:'short' }}</p>
-      
-      <div *ngIf="currentJob.startedAt" class="status-info">
-        <p><strong>Started:</strong> {{ currentJob.startedAt | date:'short' }}</p>
+      <p><span class="text-muted">Job ID:</span> <code>{{ currentJob.jobId }}</code></p>
+      <p><span class="text-muted">Created:</span> {{ currentJob.createdAt | date:'short' }}</p>
+
+      <div *ngIf="currentJob.startedAt" class="mt-sm">
+        <p><span class="text-muted">Started:</span> {{ currentJob.startedAt | date:'short' }}</p>
       </div>
 
-      <div *ngIf="currentJob.durationSeconds" class="status-info">
-        <p><strong>Duration:</strong> {{ currentJob.durationSeconds | number:'1.1-1' }}s</p>
+      <div *ngIf="currentJob.durationSeconds" class="mt-sm">
+        <p><span class="text-muted">Duration:</span> {{ currentJob.durationSeconds | number:'1.1-1' }}s</p>
       </div>
     </div>
 
     <div class="progress-section">
-      <p>
-        <strong>Progress:</strong> {{ currentJob.successfulRecords }} / {{ currentJob.totalRecords }}
-        ({{ getProgressPercentage() | number:'1.0-0' }}%)
-      </p>
-      <div class="progress-bar">
-        <div 
-          class="progress-fill"
-          [style.width.%]="getProgressPercentage()"
-        ></div>
+      <div class="progress-label-row">
+        <span class="text-muted">Progress</span>
+        <span class="font-bold">{{ currentJob.successfulRecords }}/{{ currentJob.totalRecords }} ({{ getProgressPercentage() | number:'1.0-0' }}%)</span>
+      </div>
+      <div class="progress-bar progress-bar-lg">
+        <div class="progress-fill" [style.width.%]="getProgressPercentage()"></div>
       </div>
     </div>
 
-    <div *ngIf="currentJob.failedRecords > 0" class="error-stats">
-      <p>
-        <strong>Failed:</strong> 
-        <span class="failed-count">{{ currentJob.failedRecords }}</span>
-      </p>
+    <div *ngIf="currentJob.failedRecords > 0" class="alert alert-danger mt-sm">
+      <p>{{ currentJob.failedRecords }} record(s) failed.</p>
     </div>
 
-    <div *ngIf="currentJob.errorMessage" class="error-message">
-      <p><strong>Error:</strong> {{ currentJob.errorMessage }}</p>
+    <div *ngIf="currentJob.errorMessage" class="alert alert-danger mt-sm">
+      <p>{{ currentJob.errorMessage }}</p>
     </div>
   </div>
 
-  <div *ngIf="!currentJob" class="no-job">
-    <p>No active validation job. Click "Start Validation" to begin.</p>
+  <div *ngIf="!currentJob" class="empty-state">
+    <p>No active validation job.</p>
   </div>
 </div>

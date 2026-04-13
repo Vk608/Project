@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div *ngIf="errorMessage" class="error-banner">
+    <div *ngIf="errorMessage" class="alert alert-danger error-banner">
       <div class="error-content">
         <span class="error-icon">⚠️</span>
         <p class="error-message">{{ errorMessage }}</p>
@@ -16,11 +16,6 @@ import { CommonModule } from '@angular/common';
   `,
   styles: [`
     .error-banner {
-      background-color: #ffebee;
-      border-left: 4px solid #c62828;
-      padding: 12px 16px;
-      margin-bottom: 16px;
-      border-radius: 4px;
       display: flex;
       align-items: center;
     }
@@ -29,7 +24,7 @@ import { CommonModule } from '@angular/common';
       display: flex;
       align-items: center;
       width: 100%;
-      gap: 12px;
+      gap: var(--space-sm);
     }
 
     .error-icon {
@@ -39,24 +34,22 @@ import { CommonModule } from '@angular/common';
 
     .error-message {
       margin: 0;
-      color: #c62828;
       flex: 1;
     }
 
     .close-btn {
       background: none;
       border: none;
-      color: #c62828;
+      color: inherit;
       font-size: 20px;
       cursor: pointer;
       padding: 0;
       width: 24px;
       height: 24px;
       flex-shrink: 0;
-    }
-
-    .close-btn:hover {
       opacity: 0.7;
+
+      &:hover { opacity: 1; }
     }
   `]
 })

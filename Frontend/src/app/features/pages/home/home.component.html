@@ -1,0 +1,88 @@
+<div class="page-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h1>PubMed Validation</h1>
+      <p class="text-muted">Validate internal records against the official PubMed dataset.</p>
+    </div>
+  </div>
+
+  <app-error-banner [errorMessage]="error" (closed)="onErrorClosed()"></app-error-banner>
+
+  <!-- Validation Panel -->
+  <app-card cardTitle="Validation Job">
+    <div class="job-control">
+      <app-button
+        variant="primary"
+        [loading]="isStarting"
+        [disabled]="isStarting || isPolling"
+        (clicked)="startValidation()"
+      >
+        {{ isStarting ? 'Starting...' : 'Start Validation' }}
+      </app-button>
+
+      <app-button
+        *ngIf="isPolling"
+        variant="danger"
+        (clicked)="stopPolling()"
+      >
+        Stop Polling
+      </app-button>
+    </div>
+
+    <!-- Job Status -->
+    <div *ngIf="currentJob" class="job-status-section">
+      <div class="status-header-row">
+        <h4>Current Job</h4>
+        <span class="status-badge" [ngClass]="getStatusBadgeClass()">
+          {{ currentJob.statusDisplay }}
+        </span>
+      </div>
+
+      <div class="status-grid">
+        <div class="status-field">
+          <span class="status-label">Job ID</span>
+          <code>{{ currentJob.jobId }}</code>
+        </div>
+        <div class="status-field">
+          <span class="status-label">Created</span>
+          <span>{{ currentJob.createdAt | date:'medium' }}</span>
+        </div>
+        <div *ngIf="currentJob.startedAt" class="status-field">
+          <span class="status-label">Started</span>
+          <span>{{ currentJob.startedAt | date:'medium' }}</span>
+        </div>
+        <div *ngIf="currentJob.durationSeconds" class="status-field">
+          <span class="status-label">Duration</span>
+          <span>{{ currentJob.durationSeconds | number:'1.1-1' }}s</span>
+        </div>
+      </div>
+
+      <div class="progress-section">
+        <div class="progress-label-row">
+          <span class="text-muted">Progress</span>
+          <span class="font-bold">{{ currentJob.successfulRecords }}/{{ currentJob.totalRecords }} ({{ getProgressPercentage() | number:'1.0-0' }}%)</span>
+        </div>
+        <div class="progress-bar progress-bar-lg">
+          <div class="progress-fill" [style.width.%]="getProgressPercentage()"></div>
+        </div>
+      </div>
+
+      <div *ngIf="currentJob.failedRecords > 0" class="alert alert-warning mt-sm">
+        <p>{{ currentJob.failedRecords }} record(s) failed validation.</p>
+      </div>
+
+      <div *ngIf="currentJob.errorMessage" class="alert alert-danger mt-sm">
+        <p>{{ currentJob.errorMessage }}</p>
+      </div>
+
+      <div *ngIf="currentJob.status === 'Completed'" class="alert alert-success mt-sm">
+        <p>Validation complete. View results on the <strong>Results</strong> page.</p>
+      </div>
+    </div>
+
+    <div *ngIf="!currentJob" class="empty-state">
+      <p>No active validation job. Click "Start Validation" to begin.</p>
+    </div>
+  </app-card>
+</div>
