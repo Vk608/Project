@@ -35,7 +35,7 @@ namespace FABBatchValidator.Services
         /// Execute the full validation pipeline for a given job.
         /// This method is called from a background thread pool task.
         /// </summary>
-        public async Task ExecuteValidationAsync(string jobId)
+        public async Task ExecuteValidationAsync(string jobId, string inputFilePath = null)
         {
             try
             {
@@ -44,7 +44,7 @@ namespace FABBatchValidator.Services
 
                 // Step 1: Read input records
                 Console.WriteLine($"[AsyncValidationWorker] Reading input records...");
-                var records = _inputReader.ReadRecords();
+                var records = _inputReader.ReadRecords(inputFilePath);
 
                 if (records.Count == 0)
                 {
