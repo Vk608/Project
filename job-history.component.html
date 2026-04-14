@@ -1,0 +1,124 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>Job History</h1>
+    <app-button
+      variant="primary"
+      [loading]="isLoading"
+      (clicked)="loadJobHistory()"
+    >
+      Refresh
+    </app-button>
+  </div>
+
+  <app-error-banner [errorMessage]="error" (closed)="onErrorClosed()"></app-error-banner>
+
+  <app-loader *ngIf="isLoading" message="Loading job history..."></app-loader>
+
+  <div *ngIf="!isLoading && jobs.length === 0" class="empty-state">
+    <p>No validation jobs found. Start a new job from the Home page.</p>
+  </div>
+
+  <div *ngIf="!isLoading && jobs.length > 0">
+    <p class="text-muted mb-sm" style="font-size: var(--font-sm);">
+      Showing {{ (currentPage - 1) * pageSize + 1 }}–{{ Math.min(currentPage * pageSize, jobs.length) }}
+      of {{ jobs.length }} jobs
+    </p>
+
+    <div class="jobs-grid">
+      <div
+        *ngFor="let job of paginatedJobs"
+        class="card job-card"
+        [class.job-card-active]="isCurrentJob(job)"
+      >
+        <!-- Header -->
+        <div class="job-card-header">
+          <div class="job-card-title">
+            <h3>{{ job.jobId.substring(0, 8) }}</h3>
+            <span class="status-badge" [ngClass]="getStatusBadgeClass(job.status)">
+              {{ job.statusDisplay }}
+            </span>
+          </div>
+          <div class="job-card-meta">
+            <span class="text-muted">{{ job.createdAt | date:'short' }}</span>
+            <span *ngIf="isCurrentJob(job)" class="current-tag">Active</span>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="job-stats">
+          <div class="stat-item">
+            <span class="text-muted">Total</span>
+            <span class="font-bold">{{ job.totalRecords }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="text-muted">Passed</span>
+            <span class="font-bold text-success">{{ job.successfulRecords }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="text-muted">Failed</span>
+            <span class="font-bold" [class.text-danger]="job.failedRecords > 0">
+              {{ job.failedRecords }}
+            </span>
+          </div>
+          <div class="stat-item">
+            <span class="text-muted">Rate</span>
+            <span class="font-bold">{{ getSuccessRate(job) }}</span>
+          </div>
+        </div>
+
+        <!-- Progress -->
+        <div class="mb-sm">
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="getProgressPercentage(job)"></div>
+          </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="job-timeline" *ngIf="job.startedAt || job.completedAt">
+          <div *ngIf="job.startedAt" class="timeline-row">
+            <span class="text-muted">Started</span>
+            <span>{{ job.startedAt | date:'short' }}</span>
+          </div>
+          <div *ngIf="job.completedAt" class="timeline-row">
+            <span class="text-muted">Completed</span>
+            <span>{{ job.completedAt | date:'short' }}</span>
+          </div>
+          <div *ngIf="job.durationSeconds" class="timeline-row">
+            <span class="text-muted">Duration</span>
+            <span>{{ job.durationSeconds | number:'1.1-1' }}s</span>
+          </div>
+        </div>
+
+        <!-- Error -->
+        <div *ngIf="job.errorMessage" class="alert alert-danger mt-sm">
+          <p>{{ job.errorMessage }}</p>
+        </div>
+
+        <!-- Footer Actions -->
+        <div class="job-card-footer mt-md" *ngIf="job.status === 'Completed'">
+          <app-button
+            variant="secondary"
+            class="w-full"
+            (clicked)="viewResults(job.jobId)"
+          >
+            View Results
+          </app-button>
+        </div>
+      </div>
+    </div>
+
+    <div class="pagination" *ngIf="totalPages > 1">
+      <button
+        class="btn btn-secondary btn-sm"
+        (click)="goToPage(currentPage - 1)"
+        [disabled]="currentPage === 1"
+      >Prev</button>
+      <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
+      <button
+        class="btn btn-secondary btn-sm"
+        (click)="goToPage(currentPage + 1)"
+        [disabled]="currentPage === totalPages"
+      >Next</button>
+    </div>
+  </div>
+</div>
